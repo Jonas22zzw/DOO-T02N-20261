@@ -4,91 +4,146 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CalculadoraGUI extends JFrame {
-    private JTextField txtNum1, txtNum2, txtResultado;
-    private JTextArea areaHistorico;
-    private CalculadoraLogica logica;
+
+    private JTextField visor;
+    private JTextArea log;
+    private double val1 = 0, val2Memoria = 0;
+    private String op = "", ultimaOp = "";
+    private boolean novo = true, repete = false;
+    private CalculadoraLogica calc;
 
     public CalculadoraGUI() {
-        logica = new CalculadoraLogica();
-        configurarJanela();
+        calc = new CalculadoraLogica();
+        init();
     }
 
-    private void configurarJanela() {
-        setTitle("Calculadora");
-        setSize(400, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private void init() {
+        setTitle("Calculadorinha");
+        setSize(320, 550);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.BLACK);
 
-        JPanel painelEntrada = new JPanel(new GridLayout(3, 2, 5, 5));
-        txtNum1 = new JTextField();
-        txtNum2 = new JTextField();
-        txtResultado = new JTextField();
-        txtResultado.setEditable(false);
+        log = new JTextArea(5, 20);
+        log.setEditable(false);
+        log.setBackground(new Color(20, 20, 20));
+        log.setForeground(new Color(150, 150, 150));
+        log.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane scroll = new JScrollPane(log);
+        scroll.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
-        painelEntrada.add(new JLabel(" Número 1:"));
-        painelEntrada.add(txtNum1);
-        painelEntrada.add(new JLabel(" Número 2:"));
-        painelEntrada.add(txtNum2);
-        painelEntrada.add(new JLabel(" Resultado:"));
-        painelEntrada.add(txtResultado);
+        visor = new JTextField("0");
+        visor.setEditable(false);
+        visor.setHorizontalAlignment(SwingConstants.RIGHT);
+        visor.setFont(new Font("Arial", Font.BOLD, 35));
+        visor.setBackground(Color.BLACK);
+        visor.setForeground(Color.WHITE);
+        visor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel painelBotoes = new JPanel(new GridLayout(1, 4, 5, 5));
-        String[] operacoes = { "+", "-", "×", "÷" };
+        JPanel topo = new JPanel(new BorderLayout());
+        topo.add(scroll, BorderLayout.NORTH);
+        topo.add(visor, BorderLayout.SOUTH);
+        add(topo, BorderLayout.NORTH);
 
-        for (String op : operacoes) {
-            JButton btn = new JButton(op);
-            btn.addActionListener(new BotaoHandler(op));
-            painelBotoes.add(btn);
+        JPanel grade = new JPanel(new GridLayout(4, 4, 8, 8));
+        grade.setBackground(Color.BLACK);
+
+        String[] teclas = { "0", "C", "=", "+", "1", "2", "3",
+                "-", "4", "5", "6", "×", "7", "8", "9", "÷" };
+
+        for (String t : teclas) {
+            JButton b = new JButton(t);
+            b.setFont(new Font("Arial", Font.PLAIN, 20));
+            b.setFocusPainted(false);
+
+            if ("0123456789".contains(t)) {
+                b.setBackground(new Color(50, 50, 50));
+                b.setForeground(Color.WHITE);
+            } else if (t.equals("=")) {
+                b.setBackground(new Color(255, 150, 0));
+                b.setForeground(Color.WHITE);
+            } else {
+                b.setBackground(new Color(80, 80, 80));
+                b.setForeground(Color.WHITE);
+            }
+
+            b.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    processar(t);
+                }
+            });
+            grade.add(b);
         }
 
-        areaHistorico = new JTextArea(10, 30);
-        areaHistorico.setEditable(false);
-        JScrollPane scroll = new JScrollPane(areaHistorico);
-        scroll.setBorder(BorderFactory.createTitledBorder("Histórico de Operações"));
-
-        add(painelEntrada, BorderLayout.NORTH);
-        add(painelBotoes, BorderLayout.CENTER);
-        add(scroll, BorderLayout.SOUTH);
-
+        add(grade, BorderLayout.CENTER);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private class BotaoHandler implements ActionListener {
-        private String operacao;
-
-        public BotaoHandler(String operacao) {
-            this.operacao = operacao;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                double n1 = Double.parseDouble(txtNum1.getText().replace(",", "."));
-                double n2 = Double.parseDouble(txtNum2.getText().replace(",", "."));
-
-                double res = logica.calcular(n1, n2, operacao);
-                txtResultado.setText(String.valueOf(res));
-
-                atualizarHistorico();
-
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Erro: Digite apenas números válidos!", "Entrada Inválida",
-                        JOptionPane.ERROR_MESSAGE);
-            } catch (CalculadoraException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro de Cálculo", JOptionPane.WARNING_MESSAGE);
+    private void processar(String t) {
+        try {
+            if ("0123456789".contains(t)) {
+                if (novo) {
+                    visor.setText(t);
+                    novo = false;
+                } else {
+                    visor.setText(visor.getText() + t);
+                }
+                repete = false;
+            } else if (t.equals("C")) {
+                limpar();
+            } else if (t.equals("=")) {
+                resolver();
+            } else {
+                setOp(t);
             }
+        } catch (CalculadoraException err) {
+            JOptionPane.showMessageDialog(null, err.getMessage(),
+                    "Erro!!", 0);
+            limpar();
         }
     }
 
-    private void atualizarHistorico() {
-        StringBuilder sb = new StringBuilder();
-        for (String linha : logica.getHistorico()) {
-            sb.append(linha).append("\n");
-        }
-        areaHistorico.setText(sb.toString());
+    private void limpar() {
+        visor.setText("0");
+        val1 = 0;
+        val2Memoria = 0;
+        op = "";
+        ultimaOp = "";
+        novo = true;
+        repete = false;
+        log.setText("");
     }
 
-    public static void main(String[] args) {
-        new CalculadoraGUI();
+    private void resolver() throws CalculadoraException {
+        double v2;
+        if (!repete) {
+            if (op.isEmpty())
+                return;
+            v2 = Double.parseDouble(visor.getText());
+            val2Memoria = v2;
+            ultimaOp = op;
+            repete = true;
+        } else {
+            if (ultimaOp.isEmpty())
+                return;
+            val1 = Double.parseDouble(visor.getText());
+            v2 = val2Memoria;
+        }
+
+        double res = calc.executar(val1, v2, ultimaOp);
+        log.append(val1 + " " + ultimaOp + " " + v2 + " = " + res + "\n");
+        visor.setText(String.valueOf(res));
+        val1 = res;
+        novo = true;
+        op = "";
+    }
+
+    private void setOp(String s) {
+        val1 = Double.parseDouble(visor.getText());
+        op = s;
+        novo = true;
+        repete = false;
     }
 }

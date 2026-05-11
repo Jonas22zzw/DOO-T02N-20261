@@ -1,5 +1,5 @@
 public class CalculadoraException extends Exception {
-    public CalculadoraException(String mensagem) {
-        super(mensagem);
+    public CalculadoraException(String msg) {
+        super(msg);
     }
 }

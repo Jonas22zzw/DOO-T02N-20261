@@ -1,36 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class CalculadoraLogica {
-    private List<String> historico = new ArrayList<>();
-
-    public double calcular(double n1, double n2, String operacao) throws CalculadoraException {
-        double resultado;
-
-        switch (operacao) {
+    public double executar(double n1, double n2, String op) throws CalculadoraException {
+        switch (op) {
             case "+":
-                resultado = n1 + n2;
-                break;
+                return n1 + n2;
             case "-":
-                resultado = n1 - n2;
-                break;
+                return n1 - n2;
             case "×":
-                resultado = n1 * n2;
-                break;
+                return n1 * n2;
             case "÷":
                 if (n2 == 0)
-                    throw new CalculadoraException("Erro: Divisão por zero não permitida!");
-                resultado = n1 / n2;
-                break;
+                    throw new CalculadoraException("Impossível dividir por zero!!!!");
+                return n1 / n2;
             default:
-                throw new CalculadoraException("Operação inválida!");
+                return n2;
         }
-
-        historico.add(String.format("%.2f %s %.2f = %.2f", n1, operacao, n2, resultado));
-        return resultado;
-    }
-
-    public List<String> getHistorico() {
-        return historico;
     }
 }
