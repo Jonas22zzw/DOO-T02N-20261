@@ -1,32 +1,27 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 public class Calculadora2 {
-    public class CalculadoraException extends Exception {
+    public static class CalculadoraException extends Exception {
         public CalculadoraException(String mensagem){
             super(mensagem);
             }
         }
 
     public static double resultado = 0;
-    public static double inputAtual = 0;
-    public static String input1 = null;
-    public static String input2 = null;
+    public static String inputAtual = null;
+    public static boolean novoNumero = true;
     public static String operacao = null;
     public static void main(String[] args) {
+        
 
         JFrame frame = new JFrame("Calculadora");
         frame.setLayout(null);
@@ -156,9 +151,9 @@ public class Calculadora2 {
         um.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("1");
-                    inputAtual = 1;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '1');
                 }
@@ -168,13 +163,11 @@ public class Calculadora2 {
         dois.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("2");
-                    inputAtual = 2;
-                    input1 = "2";
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '2');
-                input1 += "2";
                 }
             }
         });
@@ -182,9 +175,9 @@ public class Calculadora2 {
         tres.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("3");
-                    inputAtual = 3;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '3');
                 }
@@ -194,9 +187,9 @@ public class Calculadora2 {
         quatro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("4");
-                    inputAtual = 4;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '4');
                 }
@@ -204,11 +197,11 @@ public class Calculadora2 {
         });
 
         cinco.addActionListener(new ActionListener() {
-            @Override
+           @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("5");
-                    inputAtual = 5;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '5');
                 }
@@ -218,9 +211,9 @@ public class Calculadora2 {
         seis.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("6");
-                    inputAtual = 6;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '6');
                 }
@@ -230,9 +223,9 @@ public class Calculadora2 {
         sete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("7");
-                    inputAtual = 7;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '7');
                 }
@@ -242,9 +235,9 @@ public class Calculadora2 {
         oito.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("8");
-                    inputAtual = 8;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '8');
                 }
@@ -254,9 +247,9 @@ public class Calculadora2 {
         nove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("9");
-                    inputAtual = 9;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '9');
                 }
@@ -266,9 +259,9 @@ public class Calculadora2 {
         zero.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (inputAtual == 0){
+                if (novoNumero){
                     resultadoField.setText("0");
-                    inputAtual = 0;
+                    novoNumero = false;
                 }else{
                 resultadoField.setText(resultadoField.getText() + '0');
                 }
@@ -280,20 +273,22 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
-
-                    if (inputAtual == 0){
-                        resultado = valorAtual;
-                    }else if (inputAtual == 67){
-
-                    }
-                    
-                    else {
-                        resultado += valorAtual;
-                    }
-                    operacao = "+";
-                    inputAtual = 0;
-                    input1 = "null";
-                    resultadoField.setText(Double.toString(resultado));
+                    if (operacao != null){
+                        if (operacao.equals("+")){
+                            resultado += valorAtual;
+                        }else if (operacao.equals("-")){
+                            resultado -= valorAtual;
+                        }else if (operacao.equals("*")){
+                            resultado *= valorAtual;
+                        }else if(operacao.equals("/")){
+                            resultado /= valorAtual;
+                        }
+                    }else {
+                            resultado = valorAtual;
+                        }
+                        operacao = "+";
+                        resultadoField.setText(Double.toString(resultado));
+                        novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
                 }
@@ -305,15 +300,22 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
-
-                    if (inputAtual == 0){
-                        resultado = valorAtual;
+                    if (operacao != null){
+                        if (operacao.equals("+")){
+                            resultado += valorAtual;
+                        }else if (operacao.equals("-")){
+                            resultado -= valorAtual;
+                        }else if (operacao.equals("*")){
+                            resultado *= valorAtual;
+                        }else if(operacao.equals("/")){
+                            resultado /= valorAtual;
+                        }
                     }else {
-                        resultado -= valorAtual;
-                    }
-                    operacao = "-";
-                    inputAtual = 0;
-                    resultadoField.setText(Double.toString(resultado));
+                            resultado = valorAtual;
+                        }
+                        operacao = "-";
+                        resultadoField.setText(Double.toString(resultado));
+                        novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
                 }
@@ -325,15 +327,22 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
-
-                    if (inputAtual == 0){
-                        resultado = valorAtual;
+                    if (operacao != null){
+                        if (operacao.equals("+")){
+                            resultado += valorAtual;
+                        }else if (operacao.equals("-")){
+                            resultado -= valorAtual;
+                        }else if (operacao.equals("*")){
+                            resultado *= valorAtual;
+                        }else if(operacao.equals("/")){
+                            resultado /= valorAtual;
+                        }
                     }else {
-                        resultado *= valorAtual;
-                    }
-                    operacao = "*";
-                    inputAtual = 0;
-                    resultadoField.setText(Double.toString(resultado));
+                            resultado = valorAtual;
+                        }
+                        operacao = "*";
+                        resultadoField.setText(Double.toString(resultado));
+                        novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
                 }
@@ -345,15 +354,22 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
-
-                    if (inputAtual == 0){
-                        resultado = valorAtual;
+                    if (operacao != null){
+                        if (operacao.equals("+")){
+                            resultado += valorAtual;
+                        }else if (operacao.equals("-")){
+                            resultado -= valorAtual;
+                        }else if (operacao.equals("*")){
+                            resultado *= valorAtual;
+                        }else if(operacao.equals("/")){
+                            resultado /= valorAtual;
+                        }
                     }else {
-                        resultado -= valorAtual;
-                    }
-                    operacao = "/";
-                    inputAtual = 0;
-                    resultadoField.setText(Double.toString(resultado));
+                            resultado = valorAtual;
+                        }
+                        operacao = "/";
+                        resultadoField.setText(Double.toString(resultado));
+                        novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
                 }
@@ -372,16 +388,25 @@ public class Calculadora2 {
                         resultado -= valorAtual;
                     }else if (operacao.equals("*")){
                         resultado *= valorAtual;
-                    }else if (operacao.equals("*")){
+                    }else if (operacao.equals("/")){
+                        if (valorAtual == 0){
+                            throw new CalculadoraException("Não pode divisão por zero >:(");
+                        }
                         resultado /= valorAtual;
                     }
-
+                    if (resultado == 67){
+                        throw new CalculadoraException("Não pode six-seven >:(");
+                    }
                     resultadoField.setText(Double.toString(resultado));
 
-                    resultado = valorAtual;
-                    inputAtual = 0;
-                } catch (Exception ex) {
-                    resultadoField.setText("Error");
+                    operacao = null;
+                    novoNumero = true;
+                } catch (CalculadoraException ex) {
+                    resultadoField.setText(ex.getMessage());
+                }catch (NumberFormatException ex){
+                    resultadoField.setText("Número inválido");
+                }catch (Exception ex){
+                    resultadoField.setText("Erro");
                 }
             }
         });
@@ -391,7 +416,8 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     resultado = 0;
-                    inputAtual = 0;
+                    operacao = null;
+                    novoNumero = true;
                     resultadoField.setText(Double.toString(resultado));
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
