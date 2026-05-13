@@ -79,6 +79,7 @@ public class CalculadoraView {
 		label_result.setBorder(null);
 		label_result.setForeground(Color.WHITE);
 		label_result.setFont(new Font("Arial", Font.BOLD, 30));
+		label_result.setEditable(false);
 		
 		keyboardOperatorPanel.add(button_sum);
 		keyboardOperatorPanel.add(button_minus);

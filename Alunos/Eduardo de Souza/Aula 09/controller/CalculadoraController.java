@@ -93,29 +93,44 @@ public class CalculadoraController {
 
 	private double resolverExpressao(String conta) throws CalculadoraException {
 
-		double resultado = 0;
+		if (conta == null || conta.isEmpty()) {
 
-		String numeroAtual = "";
-
-		char operadorAtual = '+';
+			throw new CalculadoraException(
+				"Expressão vazia."
+			);
+		}
 
 		for (int i = 0; i < conta.length(); i++) {
 
 			char c = conta.charAt(i);
 
-			if (!Character.isDigit(c) && !ehOperador(c) && c != '.') {
+			if (!Character.isDigit(c)
+				&& !ehOperador(c)
+				&& c != '.') {
 
 				throw new CalculadoraException(
 					"Entrada inválida: " + c
 				);
 			}
+		}
+
+		java.util.ArrayList<Double> numeros =
+			new java.util.ArrayList<>();
+
+		java.util.ArrayList<Character> operadores =
+			new java.util.ArrayList<>();
+
+		String numeroAtual = "";
+
+		for (int i = 0; i < conta.length(); i++) {
+
+			char c = conta.charAt(i);
 
 			if (Character.isDigit(c) || c == '.') {
 
 				numeroAtual += c;
-			}
 
-			if (ehOperador(c) || i == conta.length() - 1) {
+			} else if (ehOperador(c)) {
 
 				if (numeroAtual.isEmpty()) {
 
@@ -124,11 +139,11 @@ public class CalculadoraController {
 					);
 				}
 
-				double numero;
-
 				try {
 
-					numero = Double.parseDouble(numeroAtual);
+					numeros.add(
+						Double.parseDouble(numeroAtual)
+					);
 
 				} catch (NumberFormatException ex) {
 
@@ -137,36 +152,83 @@ public class CalculadoraController {
 					);
 				}
 
-				switch (operadorAtual) {
-
-					case '+':
-						resultado += numero;
-						break;
-
-					case '-':
-						resultado -= numero;
-						break;
-
-					case '*':
-						resultado *= numero;
-						break;
-
-					case '/':
-
-						if (numero == 0) {
-
-							throw new CalculadoraException(
-								"Divisão por zero não permitida."
-							);
-						}
-
-						resultado /= numero;
-						break;
-				}
-
-				operadorAtual = c;
+				operadores.add(c);
 
 				numeroAtual = "";
+			}
+		}
+
+		if (!numeroAtual.isEmpty()) {
+
+			try {
+
+				numeros.add(
+					Double.parseDouble(numeroAtual)
+				);
+
+			} catch (NumberFormatException ex) {
+
+				throw new CalculadoraException(
+					"Entrada numérica inválida."
+				);
+			}
+		}
+
+		for (int i = 0; i < operadores.size(); i++) {
+
+			char operador = operadores.get(i);
+
+			if (operador == '*' || operador == '/') {
+
+				double num1 = numeros.get(i);
+
+				double num2 = numeros.get(i + 1);
+
+				double resultado;
+
+				if (operador == '*') {
+
+					resultado = num1 * num2;
+
+				} else {
+
+					if (num2 == 0) {
+
+						throw new CalculadoraException(
+							"Divisão por zero não permitida."
+						);
+					}
+
+					resultado = num1 / num2;
+				}
+
+				numeros.set(i, resultado);
+
+				numeros.remove(i + 1);
+
+				operadores.remove(i);
+
+				i--;
+			}
+		}
+
+		double resultado = numeros.get(0);
+
+		for (int i = 0; i < operadores.size(); i++) {
+
+			char operador = operadores.get(i);
+
+			double numero = numeros.get(i + 1);
+
+			switch (operador) {
+
+				case '+':
+					resultado += numero;
+					break;
+
+				case '-':
+					resultado -= numero;
+					break;
 			}
 		}
 
