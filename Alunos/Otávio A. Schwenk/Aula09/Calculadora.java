@@ -176,7 +176,16 @@ public class Calculadora {
         botao7.addActionListener(acaoNumeros);
         botao8.addActionListener(acaoNumeros);
         botao9.addActionListener(acaoNumeros);
-        botaoPonto.addActionListener(acaoNumeros);
+
+        botaoPonto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!numeroAtual.contains(".")){
+                    numeroAtual += ".";
+                }
+                visor.setText(numeroAtual);
+            }
+        });
 
         ActionListener acaoOperacao = new ActionListener() {
             @Override
