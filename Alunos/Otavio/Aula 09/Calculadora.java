@@ -133,11 +133,13 @@ public class Calculadora extends JFrame {
                 break;
 
             case "%":
-                if (!entrada.isEmpty()) {
-                    double v = Double.parseDouble(entrada) / 100;
-                    entrada = formatar(v);
+                try {
+                    double v = parsearEntrada(entrada);
+                    entrada = formatar(v / 100);
                     display.setText(entrada);
                     novaEntrada = false;
+                } catch (CalculadoraException ex) {
+                    exibirErro(ex.getMessage());
                 }
                 break;
 
@@ -155,40 +157,41 @@ public class Calculadora extends JFrame {
                 break;
 
             case "÷": case "×": case "−": case "+":
-                if (!entrada.isEmpty()) valorAnterior = Double.parseDouble(entrada);
-                operador = cmd;
-                novaEntrada = true;
-                expressaoDisplay.setText(formatar(valorAnterior) + " " + cmd);
+                try {
+                    if (!entrada.isEmpty()) valorAnterior = parsearEntrada(entrada);
+                    operador = cmd;
+                    novaEntrada = true;
+                    expressaoDisplay.setText(formatar(valorAnterior) + " " + cmd);
+                } catch (CalculadoraException ex) {
+                    exibirErro(ex.getMessage());
+                }
                 break;
 
             case "=":
-                if (!operador.isEmpty() && !entrada.isEmpty()) {
-                    double b = Double.parseDouble(entrada);
+                try {
+                    double b = parsearEntrada(entrada);
                     double resultado = calcular(valorAnterior, b, operador);
 
                     expressaoDisplay.setText(formatar(valorAnterior) + " " + operador + " " + formatar(b) + " =");
+                    entrada = formatar(resultado);
+                    display.setText(entrada);
+                    valorAnterior = resultado;
 
-                    if (Double.isInfinite(resultado) || Double.isNaN(resultado)) {
-                        display.setText("Erro");
-                        errou = true;
-                    } else {
-                        entrada = formatar(resultado);
-                        display.setText(entrada);
-                        valorAnterior = resultado;
-
-                        if (resultado == 67) {
-                            JOptionPane.showMessageDialog(
-                                    this,
-                                    "20 + 20 + 20 + 7...",
-                                    "Ai é muito fácil",
-                                    JOptionPane.INFORMATION_MESSAGE
-                            );
-                        }
+                    if (resultado == 67) {
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "20 + 20 + 20 + 7...",
+                                "67",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
                     }
 
-                    operador = "";
-                    novaEntrada = true;
+                } catch (CalculadoraException ex) {
+                    exibirErro(ex.getMessage());
                 }
+
+                operador = "";
+                novaEntrada = true;
                 break;
 
             default:
@@ -198,14 +201,37 @@ public class Calculadora extends JFrame {
         }
     }
 
-    private double calcular(double a, double b, String op) {
+    private double parsearEntrada(String valor) throws EntradaInvalidaException {
+        if (valor == null || valor.isEmpty()) {
+            throw new EntradaInvalidaException("vazio");
+        }
+        try {
+            return Double.parseDouble(valor);
+        } catch (NumberFormatException e) {
+            throw new EntradaInvalidaException(valor);
+        }
+    }
+
+    private double calcular(double a, double b, String op) throws CalculadoraException {
+        if (op == null || op.isEmpty()) {
+            throw new OperacaoInvalidaException();
+        }
         switch (op) {
             case "+": return a + b;
             case "−": return a - b;
             case "×": return a * b;
-            case "÷": return b == 0 ? Double.POSITIVE_INFINITY : a / b;
-            default:  return b;
+            case "÷":
+                if (b == 0) throw new DivisaoPorZeroException();
+                return a / b;
+            default:
+                throw new OperacaoInvalidaException();
         }
+    }
+
+    private void exibirErro(String mensagem) {
+        display.setText("Erro");
+        expressaoDisplay.setText(mensagem);
+        errou = true;
     }
 
     private String formatar(double v) {
