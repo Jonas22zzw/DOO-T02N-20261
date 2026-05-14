@@ -292,11 +292,18 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 if (novoNumero){
                     resultadoField.setText("0");
+
+                    if ((historico.getText().isEmpty() || equalPressed) || historico.getText().charAt(historico.getText().length() -1) != '0'){
+                        historico.setText(historico.getText() + "0");
+                    }
                     novoNumero = false;
-                }else{
-                resultadoField.setText(resultadoField.getText() + '0');
                 }
-                historico.setText(historico.getText()+"0");
+
+                if (!resultadoField.getText().equals("0")){
+                    resultadoField.setText(resultadoField.getText()+"0");
+                    historico.setText(historico.getText()+"0");
+                }
+                
             }
         });
 
@@ -305,6 +312,9 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
+                    if (valorAtual == 0 || valorAtual == 0.0){
+                        throw new CalculadoraException("Digite um número antes");
+                    }
                     if (operacao != null){
                         if (operacao.equals("+")){
                             resultado += valorAtual;
@@ -324,6 +334,8 @@ public class Calculadora2 {
                         novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
+                } catch (CalculadoraException ex){
+                    resultadoField.setText(ex.getMessage());
                 }
             }
         });
@@ -333,6 +345,9 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
+                    if (valorAtual == 0 || valorAtual == 0.0){
+                        throw new CalculadoraException("Digite um número antes");
+                    }
                     if (operacao != null){
                         if (operacao.equals("+")){
                             resultado += valorAtual;
@@ -352,6 +367,8 @@ public class Calculadora2 {
                         novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
+                } catch (CalculadoraException ex){
+                    resultadoField.setText(ex.getMessage());
                 }
             }
         });
@@ -361,6 +378,9 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
+                    if (valorAtual == 0 || valorAtual == 0.0){
+                        throw new CalculadoraException("Digite um número antes");
+                    }
                     if (operacao != null){
                         if (operacao.equals("+")){
                             resultado += valorAtual;
@@ -380,6 +400,8 @@ public class Calculadora2 {
                         novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
+                } catch (CalculadoraException ex){
+                    resultadoField.setText(ex.getMessage());
                 }
             }
         });
@@ -389,6 +411,9 @@ public class Calculadora2 {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double valorAtual = Double.parseDouble(resultadoField.getText());
+                    if (valorAtual == 0 || valorAtual == 0.0){
+                        throw new CalculadoraException("Digite um número antes");
+                    }
                     if (operacao != null){
                         if (operacao.equals("+")){
                             resultado += valorAtual;
@@ -408,6 +433,8 @@ public class Calculadora2 {
                         novoNumero = true;
                 } catch (NumberFormatException ex) {
                     resultadoField.setText("Error");
+                } catch (CalculadoraException ex){
+                    resultadoField.setText(ex.getMessage());
                 }
             }
         });
