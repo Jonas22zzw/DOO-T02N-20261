@@ -41,8 +41,8 @@ public class Calculadora extends JFrame implements ActionListener {
                 "7", "8", "9", "/",
                 "4", "5", "6", "*",
                 "1", "2", "3", "-",
-                " ", "0", " ", "+", "←", ".",
-                "C", "="
+                " ", "0", " ", "+",
+                "←", ".", "C", "="
         };
 
         for (String texto : botoes) {
@@ -52,6 +52,7 @@ public class Calculadora extends JFrame implements ActionListener {
             botao.setFont(new Font("Arial", Font.BOLD, 25));
 
             botao.addActionListener(this);
+            
 
             if (texto.equals("+")
                     || texto.equals("-")
@@ -70,23 +71,6 @@ public class Calculadora extends JFrame implements ActionListener {
 
             }
 
-            botao.addActionListener(e -> {
-
-                try {
-
-                    throw new Exception();
-
-                } catch (Exception erro) {
-
-                    JOptionPane.showMessageDialog(null,
-                        "🥚ACHOU🥚",
-                        "Achou o easter egg",
-                        JOptionPane.WARNING_MESSAGE);
-
-                }
-
-            });
-
             botao.setForeground(Color.BLACK);
             painel.add(botao);
         }
@@ -94,6 +78,7 @@ public class Calculadora extends JFrame implements ActionListener {
         add(painel, BorderLayout.CENTER);
 
         setVisible(true);
+        
     }
 
     @Override
@@ -126,58 +111,49 @@ public class Calculadora extends JFrame implements ActionListener {
                         "Visor vazio",
                         JOptionPane.INFORMATION_MESSAGE);
             }
+
         } else if (comando.equals("=")) {
 
             numero2 = Double.parseDouble(visor.getText());
 
-            switch (operacao) {
+            try {
 
-                case "+" -> resultado = numero1 + numero2;
+                switch (operacao) {
 
-                case "-" -> resultado = numero1 - numero2;
+                    case "+" -> resultado = numero1 + numero2;
 
-                case "*" -> resultado = numero1 * numero2;
+                    case "-" -> resultado = numero1 - numero2;
 
-                case "/" -> {
-                    try {
+                    case "*" -> resultado = numero1 * numero2;
 
-                        if (operacao.equals("/")) {
-
-                            if (numero2 == 0) {
-                                throw new ArithmeticException();
-                            }
-
-                            resultado = numero1 / numero2;
-                        }
-
-                    } catch (ArithmeticException e1) {
-
-                        JOptionPane.showMessageDialog(null,
-                                "Não é possível dividir por zero!",
-                                "Que isso Paizão, ai não",
-                                JOptionPane.WARNING_MESSAGE);
-
+                    case "/" -> {
+                        if(numero2==0) throw new DivException("É impossível dividir por zero");
+                        break;
                     }
+
                 }
-            }
 
             visor.setText(String.valueOf(resultado));
 
-            try {
+            if(resultado == 666){
+                throw new SixSixSixException("Você acabou de invocar o Senho do Sub Mundo");
+            }
 
-                if (resultado == 666) {
-                    throw new Exception();
-                }
-
-            } catch (Exception erro) {
+            } catch(SixSixSixException erro) {
                 JOptionPane.showMessageDialog(null,
-                        "Você acaba de invocar o senhor do Sub-mundo",
-                        "☠☠☠☠☠☠☠☠☠☠☠☠",
-                        JOptionPane.ERROR_MESSAGE);
+                    erro.getMessage(),
+                    "☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️",
+                    JOptionPane.WARNING_MESSAGE
+                );
+            } catch(DivException erro){
+                JOptionPane.showMessageDialog(null,
+                    erro.getMessage(),
+                    "Aí Não Paizão",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
             }
 
         } else {
-
             numero1 = Double.parseDouble(visor.getText());
 
             operacao = comando;
@@ -189,5 +165,6 @@ public class Calculadora extends JFrame implements ActionListener {
     public static void main(String[] args) {
 
         Calculadora calculadora = new Calculadora();
+
     }
 }
