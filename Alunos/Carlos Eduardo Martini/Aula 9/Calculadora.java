@@ -83,12 +83,19 @@ public class Calculadora extends JFrame {
     });
     botao7.addActionListener(e -> {
         visor.setText(visor.getText() + "7");
+        if (visor.getText().equals("67")) {
+            JOptionPane.showMessageDialog(null, "você não merece usar essa calculadora");
+            visor.setText(""); // Limpa a tela como punição
+        }
     });
     botao8.addActionListener(e -> {
         visor.setText(visor.getText() + "8");
     });
     botao9.addActionListener(e -> {
         visor.setText(visor.getText() + "9");
+        if (visor.getText().equals("69")) {
+            JOptionPane.showMessageDialog(null, "( ͡° ͜ʖ ͡°)");
+        }
     });
 
     botaoSom.addActionListener(e -> {
@@ -117,6 +124,10 @@ public class Calculadora extends JFrame {
             double valor2 = Double.parseDouble(visor.getText());
             double resultado = 0;
 
+            if (operador.equals("/") && valor2 == 0) {
+                throw new CalculadoraErros("Não é possível dividir por zero!");
+            }
+
             if (operador.equals("+")){
                 resultado = valor1 + valor2;
             } else if (operador.equals("-")){
@@ -125,10 +136,6 @@ public class Calculadora extends JFrame {
                 resultado = valor1 * valor2;
             } else if (operador.equals("/")){
                 resultado = valor1 / valor2;
-            }
-            
-            if (operador.equals("/") && valor2 == 0) {
-                throw new CalculadoraErros("Não é possível dividir por zero!");
             }
 
             if (resultado % 1 == 0) {
