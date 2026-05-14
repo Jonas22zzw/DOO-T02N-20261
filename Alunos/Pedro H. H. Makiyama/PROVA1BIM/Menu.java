@@ -9,7 +9,7 @@ public class Menu {
     public void mostrarMenu(){
 
         String cliente, placa;
-        int numeroLocacoes = 10, cpf, cnh;
+        int cpf, cnh; // mudar dps, tirei pra sair a mensagem
         int opcao;
         boolean temArCond;
 

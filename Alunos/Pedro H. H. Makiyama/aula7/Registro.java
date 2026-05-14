@@ -1,4 +1,4 @@
-package aula6;
+package aula7;
 
 import java.util.Scanner;
 import java.util.ArrayList;

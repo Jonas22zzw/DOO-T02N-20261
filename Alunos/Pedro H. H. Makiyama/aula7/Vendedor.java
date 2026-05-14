@@ -1,4 +1,4 @@
-package aula6;
+package aula7;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,22 +9,31 @@ public class Vendedor {
     private double salariorecebido;
     private String nome;
     private String loja;
+    private String estado;
     private String cidade;
     private String bairro;
     private String rua;
+    private int numero;
+    private String complemento;
+    private Endereco endereco;
 
     private ArrayList<Double> salariosRecebidos = new ArrayList<>();
     Scanner scan = new Scanner(System.in);
 
-    public Vendedor(String nome, int idade, String loja, String cidade, String bairro, String rua, double salariobase){
+    public Vendedor(String nome, int idade, String loja, String estado, String cidade, String bairro, String rua, int numero, String complemento, double salariobase){
 
         this.nome = nome;
         this.idade = idade;
         this.loja = loja;
+        this.estado = estado;
         this.cidade = cidade;
         this.bairro = bairro;
         this.rua = rua;
+        this.numero = numero;
+        this.complemento = complemento;
         this.salariobase = salariobase;
+
+        endereco = new Endereco(estado, cidade, bairro, rua, numero, complemento);
 
         salariosRecebidos.add(1000.);
         salariosRecebidos.add(4500.);
@@ -33,7 +42,7 @@ public class Vendedor {
 
     public void apresentarse(){
 
-        System.out.println("\nNome: " + this.nome + " - Idade: " + this.idade + " - Loja: " + this.loja);
+        System.out.println("\n| Nome - " + this.nome + " | Idade - " + this.idade + " | Loja - " + this.loja + " " + endereco.apresentarLogradouro());
     }
 
     public double calcularMedia(){
@@ -51,9 +60,9 @@ public class Vendedor {
         return somaSalariosRecebidos / cont;
     }
 
-    public void calcularBonus(){
+    public double calcularBonus(){
 
-        System.out.println("\nBônus: " + this.salariobase * .2);
+        return this.salariobase * .2;
     }
 
     public void adicionarSalarioRecebido(){
@@ -82,14 +91,6 @@ public class Vendedor {
         this.salariobase = salariobase;
     }
 
-    public double getSalarioRecebido() {
-        return salariorecebido;
-    }
-
-    public void setSalarioRecebido(double salariorecebido) {
-        this.salariorecebido = salariorecebido;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -112,6 +113,7 @@ public class Vendedor {
 
     public void setCidade(String cidade) {
         this.cidade = cidade;
+        endereco.setCidade(cidade);
     }
 
     public String getRua() {
@@ -120,6 +122,7 @@ public class Vendedor {
 
     public void setRua(String rua) {
         this.rua = rua;
+        endereco.setRua(rua);
     }
 
     public String getBairro(){
@@ -128,6 +131,7 @@ public class Vendedor {
 
     public void setBairro(String bairro){
         this.bairro = bairro;
+        endereco.setBairro(bairro);
     }
 
     public double getSalariobase() {
@@ -144,5 +148,32 @@ public class Vendedor {
 
     public void setSalariorecebido(double salariorecebido) {
         this.salariorecebido = salariorecebido;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+        endereco.setEstado(estado);
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+        endereco.setNumero(numero);
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+        endereco.setComplemento(complemento);
     }
 }   
